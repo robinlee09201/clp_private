@@ -68,6 +68,14 @@ namespace streaming_archive { namespace reader {
         return ErrorCode_Success;
     }
 
+    ErrorCode Segment::try_open (std::vector<std::pair<void *, size_t>> &memory_segments, segment_id_t segment_id) {
+        close();
+
+        m_decompressor.open(memory_segments[segment_id].first, memory_segments[segment_id].second);
+        return ErrorCode_Success;
+
+    }
+
     void Segment::close () {
         if (!m_segment_path.empty()) {
             m_decompressor.close();

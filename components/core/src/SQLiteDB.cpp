@@ -15,6 +15,30 @@ void SQLiteDB::open (const string& path) {
     }
 }
 
+void SQLiteDB::open(std::pair<void *, size_t> memory) {
+    if (auto const retval{sqlite3_open(":memory:", &m_db_handle)}; SQLITE_OK != retval) {
+        SPDLOG_ERROR("Failed to open in-memory sqlite database: {}", sqlite3_errmsg(m_db_handle));
+        close();
+        throw OperationFailed(ErrorCode_Failure, __FILENAME__, __LINE__);
+    }
+    if (auto const return_value = sqlite3_deserialize(
+                m_db_handle,
+                "main",
+                size_checked_pointer_cast<unsigned char>(memory.first),
+                memory.second,
+                memory.second,
+                SQLITE_DESERIALIZE_READONLY
+        );
+        SQLITE_OK != return_value)
+    {
+        // Note: if deserialization fails, sqlite3 API will automatically frees
+        // the buffer.
+        SPDLOG_ERROR("Failed to deserialize sqlite database - {}", sqlite3_errmsg(m_db_handle));
+        close();
+        throw OperationFailed(ErrorCode_Failure, __FILENAME__, __LINE__);
+    }
+}
+
 bool SQLiteDB::close () {
     auto return_value = sqlite3_close(m_db_handle);
     if (SQLITE_BUSY == return_value) {

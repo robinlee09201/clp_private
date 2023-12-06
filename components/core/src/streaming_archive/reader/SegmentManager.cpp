@@ -9,6 +9,12 @@ namespace streaming_archive { namespace reader {
         m_segment_dir_path = segment_dir_path;
     }
 
+    void SegmentManager::open (std::vector<std::pair<void *, size_t>> memory_segments) {
+        // Cleanup in case caller forgot to call close before calling this function
+        close();
+        m_memory_segments = memory_segments;
+    }
+
     void SegmentManager::close () {
         for (auto& id_segment_pair : m_id_to_open_segment) {
             id_segment_pair.second.close();
@@ -23,7 +29,12 @@ namespace streaming_archive { namespace reader {
         // Check that segment exists or insert it if not
         if (m_id_to_open_segment.count(segment_id) == 0) {
             // Insert and open segment
-            ErrorCode error_code = m_id_to_open_segment[segment_id].try_open(m_segment_dir_path, segment_id);
+            ErrorCode error_code;
+            if (m_memory_segments.has_value()) {
+                error_code = m_id_to_open_segment[segment_id].try_open(m_memory_segments.value(), segment_id);
+            } else {
+                error_code = m_id_to_open_segment[segment_id].try_open(m_segment_dir_path, segment_id);
+            }
             if (ErrorCode_Success != error_code) {
                 m_id_to_open_segment.erase(segment_id);
                 return error_code;

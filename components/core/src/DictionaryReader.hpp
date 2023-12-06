@@ -4,6 +4,7 @@
 // C++ standard libraries
 #include <string>
 #include <vector>
+#include <optional>
 
 // Boost libraries
 #include <boost/algorithm/string.hpp>
@@ -49,6 +50,13 @@ public:
      * @param segment_index_path
      */
     void open (const std::string& dictionary_path, const std::string& segment_index_path);
+
+    /**
+     * Opens dictionary for reading
+     * @param dictionary_memory
+     * @param segment_index_memory
+     */
+    void open (std::pair<void *, size_t> dictionary_memory, std::pair<void *, size_t> segment_index_memory);
     /**
      * Closes the dictionary
      */
@@ -101,9 +109,16 @@ protected:
     void read_segment_ids ();
 
     // Variables
+    /**
+     * each dict file includes a uint64 header
+     * with the number of entries in the file
+     * The decompressor starts with an offset of 8B
+    */
     bool m_is_open;
     FileReader m_dictionary_file_reader;
     FileReader m_segment_index_file_reader;
+    std::optional<std::pair<void *, size_t>> m_dictionary_memory;
+    std::optional<std::pair<void *, size_t>> m_segment_index_memory;
 #if USE_PASSTHROUGH_COMPRESSION
     streaming_compression::passthrough::Decompressor m_dictionary_decompressor;
     streaming_compression::passthrough::Decompressor m_segment_index_decompressor;
@@ -132,6 +147,23 @@ void DictionaryReader<DictionaryIdType, EntryType>::open (const std::string& dic
 }
 
 template <typename DictionaryIdType, typename EntryType>
+void DictionaryReader<DictionaryIdType, EntryType>::open (std::pair<void *, size_t> dictionary_memory, std::pair<void *, size_t> segment_index_memory) {
+    if (m_is_open) {
+        throw OperationFailed(ErrorCode_NotReady, __FILENAME__, __LINE__);
+    }
+
+    m_dictionary_memory = dictionary_memory;
+    m_segment_index_memory = segment_index_memory;
+    
+    
+    // simply open the decompressors with the memory
+    m_dictionary_decompressor.open(dictionary_memory.first, dictionary_memory.second);
+    m_segment_index_decompressor.open(seg_data.data(), seg_data.size());
+    m_is_open = true;
+    m_input_type = DictionaryReaderInputType::Buffer;
+}
+
+template <typename DictionaryIdType, typename EntryType>
 void DictionaryReader<DictionaryIdType, EntryType>::close () {
     if (false == m_is_open) {
         throw OperationFailed(ErrorCode_NotInit, __FILENAME__, __LINE__);
@@ -153,9 +185,14 @@ void DictionaryReader<DictionaryIdType, EntryType>::read_new_entries () {
     if (false == m_is_open) {
         throw OperationFailed(ErrorCode_NotInit, __FILENAME__, __LINE__);
     }
-
     // Read dictionary header
-    auto num_dictionary_entries = read_dictionary_header(m_dictionary_file_reader);
+    uint64_t num_dictionary_entries;
+    if(m_dictionary_memory.has_value()) {
+        num_dictionary_entries  = *reinterpret_cast<uint64_t*>(m_dictionary_memory->first);
+    } else {
+        num_dictionary_entries = read_dictionary_header(m_dictionary_file_reader);
+    }
+
 
     // Validate dictionary header
     if (num_dictionary_entries < m_entries.size()) {
@@ -175,7 +212,12 @@ void DictionaryReader<DictionaryIdType, EntryType>::read_new_entries () {
     }
 
     // Read segment index header
-    auto num_segments = read_segment_index_header(m_segment_index_file_reader);
+    uint64_t num_segments;
+    if(m_segment_index_memory.has_value()) {
+        num_segments = *reinterpret_cast<uint64_t*>(m_segment_index_memory->first);
+    } else {
+        num_segments = read_segment_index_header(m_segment_index_file_reader);
+    }
 
     // Validate segment index header
     if (num_segments < m_num_segments_read_from_index) {

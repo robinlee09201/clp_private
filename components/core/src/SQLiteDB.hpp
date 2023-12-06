@@ -31,6 +31,13 @@ public:
 
     // Methods
     void open (const std::string& path);
+
+    /**
+     * Opens database from memory
+     * @param memory
+     * @throw SQLiteDB::OperationFailed if failed to open database
+     */
+    void open (std::pair<void *, size_t> memory);
     bool close ();
 
     SQLitePreparedStatement prepare_statement (const char* statement, size_t statement_length);

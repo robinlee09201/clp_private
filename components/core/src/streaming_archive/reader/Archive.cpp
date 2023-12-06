@@ -194,4 +194,18 @@ namespace streaming_archive { namespace reader {
             }
         }
     }
+
+    void Archive_in_memory::open(struct Archive_addresses& addresses) {
+        m_addresses = addresses;
+        // Read the metadata file
+        m_metadata_db.open(addresses.metadata_db);
+        // Open log-type dictionary
+        m_logtype_dictionary.open(addresses.logtype_dictionary, addresses.logtype_segment_index);
+        // Open variables dictionary
+        m_var_dictionary.open(addresses.var_dictionary, addresses.var_segment_index);
+
+        // Open segment manager
+        m_segment_manager.open(addresses.segments);
+
+    }
 } }

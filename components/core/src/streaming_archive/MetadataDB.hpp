@@ -120,6 +120,13 @@ namespace streaming_archive {
 
         // Methods
         void open (const std::string& path);
+
+        /**
+         * Opens database from memory
+         * @param memory
+         * @throw MetadataDB::OperationFailed if failed to open database
+         */
+        void open (std::pair<void *, size_t> memory);
         void close ();
 
         void update_files (const std::vector<writer::File*>& files);
@@ -133,6 +140,8 @@ namespace streaming_archive {
         std::unique_ptr<EmptyDirectoryIterator> get_empty_directory_iterator () { return std::make_unique<EmptyDirectoryIterator>(m_db); }
 
     private:
+        // Methods
+        void init();
         // Variables
         bool m_is_open;
 

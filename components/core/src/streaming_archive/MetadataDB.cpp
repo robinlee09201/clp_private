@@ -268,7 +268,22 @@ namespace streaming_archive {
         }
 
         m_db.open(path);
+        init();
+        m_is_open = true;
+    }
 
+    void MetadataDB::open (std::pair<void *, size_t> memory) {
+        if (m_is_open) {
+            throw OperationFailed(ErrorCode_NotReady, __FILENAME__, __LINE__);
+        }
+
+        m_db.open(memory);
+        init();
+        m_is_open = true;
+
+    }
+
+    void MetadataDB::init(){
         vector<std::pair<string, string>> file_field_names_and_types(enum_to_underlying_type(FilesTableFieldIndexes::Length));
         file_field_names_and_types[enum_to_underlying_type(FilesTableFieldIndexes::Id)].first = streaming_archive::cMetadataDB::File::Id;
         file_field_names_and_types[enum_to_underlying_type(FilesTableFieldIndexes::Id)].second = "TEXT PRIMARY KEY";
@@ -342,7 +357,6 @@ namespace streaming_archive {
                        streaming_archive::cMetadataDB::EmptyDirectory::Path);
         SPDLOG_DEBUG("{:.{}}", statement_buffer.data(), statement_buffer.size());
         m_insert_empty_directories_statement = make_unique<SQLitePreparedStatement>(m_db.prepare_statement(statement_buffer.data(), statement_buffer.size()));
-        m_is_open = true;
     }
 
     void MetadataDB::close () {

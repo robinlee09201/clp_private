@@ -6,6 +6,7 @@
 #include <list>
 #include <string>
 #include <unordered_map>
+#include <optional>
 
 // Project headers
 #include "../../Defs.h"
@@ -23,6 +24,12 @@ namespace streaming_archive { namespace reader {
          * @param segment_dir_path
          */
         void open (const std::string& segment_dir_path);
+
+        /**
+         * Opens the segment manager from memory
+         * @param memory_segments
+         */
+        void open (std::vector<std::pair<void *, size_t>> memory_segments);
 
         /**
          * Closes the segment manager
@@ -47,6 +54,7 @@ namespace streaming_archive { namespace reader {
         std::unordered_map<segment_id_t, Segment> m_id_to_open_segment;
         // List of open segment IDs in LRU order (LRU segment ID at front)
         std::list<segment_id_t> m_lru_ids_of_open_segments;
+        std::optional<std::vector<std::pair<void *, size_t>>> m_memory_segments;
     };
 } }
 
