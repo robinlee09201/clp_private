@@ -11,6 +11,7 @@
 #include "ErrorCode.hpp"
 #include "SQLitePreparedStatement.hpp"
 #include "TraceableException.hpp"
+#include "type_utils.hpp"
 
 class SQLiteDB {
 public:

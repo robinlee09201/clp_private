@@ -16,6 +16,7 @@
 #include "../../SQLiteDB.hpp"
 #include "../../VariableDictionaryReader.hpp"
 #include "../MetadataDB.hpp"
+#include "../../clg/lib_clg.hpp"
 #include "File.hpp"
 #include "Message.hpp"
 
@@ -125,23 +126,15 @@ namespace streaming_archive { namespace reader {
 
     class Archive_in_memory : public Archive {
     public:
-        struct Archive_addresses {
-            std::pair<void *, size_t> logtype_dictionary;
-            std::pair<void *, size_t> logtype_segment_index;
-            std::pair<void *, size_t> metadata;
-            std::pair<void *, size_t> metadata_db;
-            std::pair<void *, size_t> var_dictionary;
-            std::pair<void *, size_t> var_segment_index;
-            std::vector<std::pair<void *, size_t>> segments;
-        };
+        
         // Methods
-        void open (struct Archive_addresses& addresses);
+        void open (struct clg::Archive_addresses& addresses);
         
 
 
     private:
         // Variables
-        struct Archive_addresses m_addresses;
+        struct clg::Archive_addresses m_addresses;
     };
 } // namespace streaming_archive::reader
 

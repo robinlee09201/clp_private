@@ -39,6 +39,9 @@ namespace clg {
         epochtime_t get_search_end_ts () const { return m_search_end_ts; }
         const GlobalMetadataDBConfig& get_metadata_db_config () const { return m_metadata_db_config; }
 
+        // Hack to ignore the archive dir for memory based search
+        void ignore_archive_dir () { m_archives_dir = " "; } 
+
     private:
         // Methods
         void print_basic_usage () const override;

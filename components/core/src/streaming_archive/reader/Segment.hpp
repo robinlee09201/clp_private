@@ -36,7 +36,7 @@ namespace streaming_archive { namespace reader {
          */
         ErrorCode try_open (const std::string& segment_dir_path, segment_id_t segment_id);
 
-        ErrorCode try_open (std::vector<std::pair<void *, size_t>> &memory_segment, segment_id_t segment_id);
+        ErrorCode try_open (std::vector<std::pair<char *, size_t>> &memory_segment, segment_id_t segment_id);
 
         /**
          * Closes the segment

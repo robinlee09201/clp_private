@@ -195,7 +195,7 @@ namespace streaming_archive { namespace reader {
         }
     }
 
-    void Archive_in_memory::open(struct Archive_addresses& addresses) {
+    void Archive_in_memory::open(struct clg::Archive_addresses& addresses) {
         m_addresses = addresses;
         // Read the metadata file
         m_metadata_db.open(addresses.metadata_db);

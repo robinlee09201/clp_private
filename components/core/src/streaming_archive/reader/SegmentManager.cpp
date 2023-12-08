@@ -9,7 +9,7 @@ namespace streaming_archive { namespace reader {
         m_segment_dir_path = segment_dir_path;
     }
 
-    void SegmentManager::open (std::vector<std::pair<void *, size_t>> memory_segments) {
+    void SegmentManager::open (std::vector<std::pair<char *, size_t>> memory_segments) {
         // Cleanup in case caller forgot to call close before calling this function
         close();
         m_memory_segments = memory_segments;

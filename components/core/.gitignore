@@ -1,3 +1,4 @@
 submodules/sqlite3/*
 third-party/**
+build/**
 

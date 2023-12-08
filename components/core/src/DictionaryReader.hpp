@@ -157,10 +157,9 @@ void DictionaryReader<DictionaryIdType, EntryType>::open (std::pair<void *, size
     
     
     // simply open the decompressors with the memory
-    m_dictionary_decompressor.open(dictionary_memory.first, dictionary_memory.second);
-    m_segment_index_decompressor.open(seg_data.data(), seg_data.size());
+    m_dictionary_decompressor.open(static_cast<char const*> (dictionary_memory.first), static_cast<size_t> (dictionary_memory.second));
+    m_segment_index_decompressor.open(static_cast<char const*> (segment_index_memory.first), static_cast<size_t> (segment_index_memory.second));
     m_is_open = true;
-    m_input_type = DictionaryReaderInputType::Buffer;
 }
 
 template <typename DictionaryIdType, typename EntryType>

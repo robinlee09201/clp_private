@@ -29,7 +29,7 @@ namespace streaming_archive { namespace reader {
          * Opens the segment manager from memory
          * @param memory_segments
          */
-        void open (std::vector<std::pair<void *, size_t>> memory_segments);
+        void open (std::vector<std::pair<char *, size_t>> memory_segments);
 
         /**
          * Closes the segment manager
@@ -54,7 +54,7 @@ namespace streaming_archive { namespace reader {
         std::unordered_map<segment_id_t, Segment> m_id_to_open_segment;
         // List of open segment IDs in LRU order (LRU segment ID at front)
         std::list<segment_id_t> m_lru_ids_of_open_segments;
-        std::optional<std::vector<std::pair<void *, size_t>>> m_memory_segments;
+        std::optional<std::vector<std::pair<char *, size_t>>> m_memory_segments;
     };
 } }
 

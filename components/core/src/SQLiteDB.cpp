@@ -24,7 +24,7 @@ void SQLiteDB::open(std::pair<void *, size_t> memory) {
     if (auto const return_value = sqlite3_deserialize(
                 m_db_handle,
                 "main",
-                size_checked_pointer_cast<unsigned char>(memory.first),
+                size_checked_pointer_cast<unsigned char>(static_cast<char*>(memory.first)),
                 memory.second,
                 memory.second,
                 SQLITE_DESERIALIZE_READONLY
