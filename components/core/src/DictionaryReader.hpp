@@ -56,7 +56,7 @@ public:
      * @param dictionary_memory
      * @param segment_index_memory
      */
-    void open (std::pair<void *, size_t> dictionary_memory, std::pair<void *, size_t> segment_index_memory);
+    void open (std::pair<char *, size_t> dictionary_memory, std::pair<char *, size_t> segment_index_memory);
     /**
      * Closes the dictionary
      */
@@ -147,7 +147,7 @@ void DictionaryReader<DictionaryIdType, EntryType>::open (const std::string& dic
 }
 
 template <typename DictionaryIdType, typename EntryType>
-void DictionaryReader<DictionaryIdType, EntryType>::open (std::pair<void *, size_t> dictionary_memory, std::pair<void *, size_t> segment_index_memory) {
+void DictionaryReader<DictionaryIdType, EntryType>::open (std::pair<char *, size_t> dictionary_memory, std::pair<char *, size_t> segment_index_memory) {
     if (m_is_open) {
         throw OperationFailed(ErrorCode_NotReady, __FILENAME__, __LINE__);
     }
@@ -157,8 +157,8 @@ void DictionaryReader<DictionaryIdType, EntryType>::open (std::pair<void *, size
     
     
     // simply open the decompressors with the memory
-    m_dictionary_decompressor.open(static_cast<char const*> (dictionary_memory.first), static_cast<size_t> (dictionary_memory.second));
-    m_segment_index_decompressor.open(static_cast<char const*> (segment_index_memory.first), static_cast<size_t> (segment_index_memory.second));
+    m_dictionary_decompressor.open(dictionary_memory.first + sizeof(uint64_t), dictionary_memory.second - sizeof(uint64_t));
+    m_segment_index_decompressor.open(segment_index_memory.first + sizeof(uint64_t), segment_index_memory.second - sizeof(uint64_t));
     m_is_open = true;
 }
 
