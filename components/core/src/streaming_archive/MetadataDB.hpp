@@ -81,6 +81,7 @@ namespace streaming_archive {
             epochtime_t get_begin_ts () const;
             epochtime_t get_end_ts () const;
             void get_timestamp_patterns (std::string& timestamp_patterns) const;
+            void get_timezone (std::string& timezone) const;
             size_t get_num_uncompressed_bytes () const;
             size_t get_num_messages () const;
             size_t get_num_variables () const;

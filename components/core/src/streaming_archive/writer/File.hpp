@@ -16,6 +16,7 @@
 #include "../../PageAllocatedVector.hpp"
 #include "../../TimestampPattern.hpp"
 #include "Segment.hpp"
+#include "../../tz/Timezone.hpp"
 
 namespace streaming_archive { namespace writer {
     /**
@@ -56,7 +57,9 @@ namespace streaming_archive { namespace writer {
                 m_is_metadata_clean(false),
                 m_is_written_out(false),
                 m_is_open(false)
-        {}
+        {
+            m_timezone = tz::get_local_timezone();
+        }
 
         // Destructor
         virtual ~File () = default;
@@ -147,6 +150,7 @@ namespace streaming_archive { namespace writer {
         epochtime_t get_begin_ts () const { return m_begin_ts; }
         epochtime_t get_end_ts () const { return m_end_ts; }
         const std::vector<std::pair<int64_t, TimestampPattern>>& get_timestamp_patterns () const { return m_timestamp_patterns; }
+        const std::string& get_timezone () const { return m_timezone; }
         std::string get_encoded_timestamp_patterns () const;
         uint64_t get_num_messages () const { return m_num_messages; }
         uint64_t get_num_variables () const { return m_num_variables; }
@@ -188,6 +192,7 @@ namespace streaming_archive { namespace writer {
         epochtime_t m_begin_ts;
         epochtime_t m_end_ts;
         std::vector<std::pair<int64_t, TimestampPattern>> m_timestamp_patterns;
+        std::string m_timezone;
 
         group_id_t m_group_id;
 

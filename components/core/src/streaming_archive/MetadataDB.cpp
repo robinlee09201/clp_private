@@ -20,6 +20,7 @@ enum class FilesTableFieldIndexes : uint16_t {
     BeginTimestamp,
     EndTimestamp,
     TimestampPatterns,
+    Timezone,
     NumUncompressedBytes,
     NumMessages,
     NumVariables,
@@ -109,6 +110,7 @@ namespace streaming_archive {
         field_names[enum_to_underlying_type(FilesTableFieldIndexes::BeginTimestamp)] = streaming_archive::cMetadataDB::File::BeginTimestamp;
         field_names[enum_to_underlying_type(FilesTableFieldIndexes::EndTimestamp)] = streaming_archive::cMetadataDB::File::EndTimestamp;
         field_names[enum_to_underlying_type(FilesTableFieldIndexes::TimestampPatterns)] = streaming_archive::cMetadataDB::File::TimestampPatterns;
+        field_names[enum_to_underlying_type(FilesTableFieldIndexes::Timezone)] = streaming_archive::cMetadataDB::File::Timezone;
         field_names[enum_to_underlying_type(FilesTableFieldIndexes::NumUncompressedBytes)] = streaming_archive::cMetadataDB::File::NumUncompressedBytes;
         field_names[enum_to_underlying_type(FilesTableFieldIndexes::NumMessages)] = streaming_archive::cMetadataDB::File::NumMessages;
         field_names[enum_to_underlying_type(FilesTableFieldIndexes::NumVariables)] = streaming_archive::cMetadataDB::File::NumVariables;
@@ -226,6 +228,10 @@ namespace streaming_archive {
         m_statement.column_string(enum_to_underlying_type(FilesTableFieldIndexes::TimestampPatterns), timestamp_patterns);
     }
 
+    void MetadataDB::FileIterator::get_timezone (string& timezone) const {
+        m_statement.column_string(enum_to_underlying_type(FilesTableFieldIndexes::Timezone), timezone);
+    }
+
     size_t MetadataDB::FileIterator::get_num_uncompressed_bytes () const {
         return m_statement.column_int64(enum_to_underlying_type(FilesTableFieldIndexes::NumUncompressedBytes));
     }
@@ -305,6 +311,9 @@ namespace streaming_archive {
                 streaming_archive::cMetadataDB::File::TimestampPatterns;
         file_field_names_and_types[enum_to_underlying_type(FilesTableFieldIndexes::TimestampPatterns)].second = "TEXT";
 
+        file_field_names_and_types[enum_to_underlying_type(FilesTableFieldIndexes::Timezone)].first = streaming_archive::cMetadataDB::File::Timezone;
+        file_field_names_and_types[enum_to_underlying_type(FilesTableFieldIndexes::Timezone)].second = "TEXT";
+
         file_field_names_and_types[enum_to_underlying_type(FilesTableFieldIndexes::NumUncompressedBytes)].first =
                 streaming_archive::cMetadataDB::File::NumUncompressedBytes;
         file_field_names_and_types[enum_to_underlying_type(FilesTableFieldIndexes::NumUncompressedBytes)].second = "INTEGER";
@@ -383,6 +392,7 @@ namespace streaming_archive {
             m_upsert_file_statement->bind_int64(enum_to_underlying_type(FilesTableFieldIndexes::EndTimestamp) + 1, file->get_end_ts());
             m_upsert_file_statement->bind_text(enum_to_underlying_type(FilesTableFieldIndexes::TimestampPatterns) + 1, file->get_encoded_timestamp_patterns(),
                                                true);
+            m_upsert_file_statement->bind_text(enum_to_underlying_type(FilesTableFieldIndexes::Timezone) + 1, file->get_timezone(), false);
             m_upsert_file_statement->bind_int64(enum_to_underlying_type(FilesTableFieldIndexes::NumUncompressedBytes) + 1,
                                                 (int64_t)file->get_num_uncompressed_bytes());
             m_upsert_file_statement->bind_int64(enum_to_underlying_type(FilesTableFieldIndexes::NumMessages) + 1, (int64_t)file->get_num_messages());

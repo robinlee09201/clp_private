@@ -11,6 +11,9 @@
 // Project headers
 #include "spdlog_with_specializations.hpp"
 
+// Timezone library
+#include "tz/Timezone.hpp"
+
 using std::string;
 using std::to_string;
 using std::vector;
@@ -592,12 +595,14 @@ bool TimestampPattern::parse_timestamp (const string& line, epochtime_t& timesta
                            + std::chrono::milliseconds{millisecond}
                            + std::chrono::microseconds{microsecond}
                            + std::chrono::nanoseconds{nanosecond};
-    // Get time point since epoch
-    auto unix_epoch_point = date::sys_days(date::year(1970)/1/1);
-    // Get timestamp since epoch
-    auto duration_since_epoch = timestamp_point - unix_epoch_point;
-    // Convert to raw milliseconds
-    timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(duration_since_epoch).count();
+    // Convert to UTC
+    // Note: Assuming timezone while compression is the same as the timezone
+    // where the log is generated.
+    #ifdef USE_UTC_TIME
+    timestamp_point = tz::local_to_utc(timestamp_point);
+    #endif
+    // Convert to epoch time
+    timestamp = tz::convert_to_epochtime(timestamp_point);
 
     timestamp_begin_pos = ts_begin_ix;
     timestamp_end_pos = line_ix;

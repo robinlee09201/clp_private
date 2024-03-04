@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 project(CLP LANGUAGES CXX C)
+SET(CMAKE_TOOLCHAIN_FILE ArmToolchain.cmake)
+include(src/tz/dateConfig.cmake)
 
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(default_build_type "Release")
@@ -334,6 +336,8 @@ set(SOURCE_FILES_clp
         src/TraceableException.cpp
         src/TraceableException.hpp
         src/type_utils.hpp
+        src/tz/tz.cpp
+        src/tz/Timezone.cpp
         src/Utils.cpp
         src/Utils.hpp
         src/VariableDictionaryEntry.cpp
@@ -352,6 +356,7 @@ add_executable(clp ${SOURCE_FILES_clp})
 target_include_directories(clp
         PRIVATE
         ${CMAKE_SOURCE_DIR}/submodules
+        ${CURL_INCLUDE_DIRS}
         )
 target_link_libraries(clp
         PRIVATE
@@ -364,6 +369,7 @@ target_link_libraries(clp
         ${STD_FS_LIBS}
         yaml-cpp::yaml-cpp
         ZStd::ZStd
+        ${CURL_LIBRARIES}
         )
 target_compile_features(clp
         PRIVATE cxx_std_17
@@ -503,6 +509,8 @@ set(SOURCE_FILES_clg
         src/TraceableException.cpp
         src/TraceableException.hpp
         src/type_utils.hpp
+        src/tz/tz.cpp
+        src/tz/Timezone.cpp
         src/Utils.cpp
         src/Utils.hpp
         src/VariableDictionaryEntry.cpp
@@ -522,6 +530,7 @@ add_executable(clg ${SOURCE_FILES_clg})
 target_include_directories(clg
         PRIVATE
         ${CMAKE_SOURCE_DIR}/submodules
+        ${CURL_INCLUDE_DIRS}
         )
 target_link_libraries(clg
         PRIVATE
@@ -534,6 +543,7 @@ target_link_libraries(clg
         ${STD_FS_LIBS}
         yaml-cpp::yaml-cpp
         ZStd::ZStd
+        ${CURL_LIBRARIES}
         )
 target_compile_features(clg
         PRIVATE cxx_std_17
@@ -661,6 +671,8 @@ set(SOURCE_FILES_clo
         src/TraceableException.cpp
         src/TraceableException.hpp
         src/type_utils.hpp
+        src/tz/tz.cpp
+        src/tz/Timezone.cpp
         src/Utils.cpp
         src/Utils.hpp
         src/VariableDictionaryEntry.cpp
@@ -680,6 +692,7 @@ add_executable(clo ${SOURCE_FILES_clo})
 target_include_directories(clo
         PRIVATE
         ${CMAKE_SOURCE_DIR}/submodules
+        ${CURL_INCLUDE_DIRS}
         )
 target_link_libraries(clo
         PRIVATE
@@ -690,6 +703,7 @@ target_link_libraries(clo
         ${sqlite_LIBRARY_DEPENDENCIES}
         ${STD_FS_LIBS}
         ZStd::ZStd
+        ${CURL_LIBRARIES}
         )
 target_compile_features(clo
         PRIVATE cxx_std_17
@@ -879,6 +893,8 @@ set(SOURCE_FILES_unitTest
         src/TraceableException.cpp
         src/TraceableException.hpp
         src/type_utils.hpp
+        src/tz/tz.cpp
+        src/tz/Timezone.cpp
         src/Utils.cpp
         src/Utils.hpp
         src/VariableDictionaryEntry.cpp
@@ -914,6 +930,7 @@ add_executable(unitTest ${SOURCE_FILES_unitTest})
 target_include_directories(unitTest
         PRIVATE
         ${CMAKE_SOURCE_DIR}/submodules
+        ${CURL_INCLUDE_DIRS}
         )
 target_link_libraries(unitTest
         PRIVATE
@@ -926,6 +943,7 @@ target_link_libraries(unitTest
         ${STD_FS_LIBS}
         yaml-cpp::yaml-cpp
         ZStd::ZStd
+        ${CURL_LIBRARIES}
         )
 target_compile_features(unitTest
         PRIVATE cxx_std_17
@@ -1059,6 +1077,8 @@ set(SOURCE_FILES_lib_clg
         src/TraceableException.cpp
         src/TraceableException.hpp
         src/type_utils.hpp
+        src/tz/tz.cpp
+        src/tz/Timezone.cpp
         src/Utils.cpp
         src/Utils.hpp
         src/VariableDictionaryEntry.cpp
@@ -1078,6 +1098,7 @@ add_library(lib-clg STATIC ${SOURCE_FILES_lib_clg})
 target_include_directories(lib-clg
         PRIVATE
         ${CMAKE_SOURCE_DIR}/submodules
+        ${CURL_INCLUDE_DIRS}
         )
 target_link_libraries(lib-clg
         PRIVATE
@@ -1090,6 +1111,7 @@ target_link_libraries(lib-clg
         ${STD_FS_LIBS}
         yaml-cpp::yaml-cpp
         ZStd::ZStd
+        ${CURL_LIBRARIES}
         )
 target_compile_features(lib-clg
         PRIVATE cxx_std_17
